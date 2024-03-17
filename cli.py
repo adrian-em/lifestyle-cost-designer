@@ -1,6 +1,7 @@
 import typer
 import services
-from calculations import calculate_total_expenses, calculate_required_income
+from calculations import calculate_total_expenses, calculate_required_income, calculate_monthly_expense
+import matplotlib.pyplot as plt
 
 
 app = typer.Typer()
@@ -91,6 +92,37 @@ def cli_delete_expense(expense_id: int):
         typer.echo(f"Expense with ID {expense_id} successfully deleted.")
     except Exception as e:
         typer.echo(f"Error: {str(e)}")
+
+@app.command()
+def plot_required_monthly_income():
+    expenses = services.list_expenses()
+    settings = services.get_settings()
+    if not expenses or not settings or settings.current_expenses is None:
+        typer.echo("Required data is missing. Please ensure expenses, settings, and current expenses are properly set.")
+        raise typer.Exit(code=1)
+
+    expenses_sorted = sorted(expenses, key=lambda x: x.priority)
+    initial_gross_required = calculate_required_income(settings.current_expenses, settings.tax_rate, settings.savings_rate)
+    cumulative_costs = [initial_gross_required]
+    names = ['Current Expenses']
+
+    for expense in expenses_sorted:
+        monthly_cost = calculate_monthly_expense(expense)
+        new_total_net = cumulative_costs[-1] + calculate_required_income(monthly_cost, settings.tax_rate, settings.savings_rate)
+        cumulative_costs.append(new_total_net)
+        names.append(expense.description)
+
+    plt.figure(figsize=(10, 6))
+    plt.step(names, cumulative_costs, where='post')
+    plt.xlabel('Expenses')
+    plt.ylabel('Cumulative Gross Income Needed ($)')
+    plt.title('Cumulative Gross Income Needed by Expense Priority')
+    plt.grid(True)
+    for i, cost in enumerate(cumulative_costs):
+        plt.annotate(f'${cost:.2f}', (names[i], cost), textcoords="offset points", xytext=(0,5), ha='center')
+    plt.show()
+
+
 
 
 if __name__ == "__main__":
