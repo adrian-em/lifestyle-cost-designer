@@ -42,3 +42,18 @@ These calculations assist in setting realistic financial goals and planning effe
 You can either use it via API or with CLI.
 
 `python cli.py --help`
+
+## Examples
+
+#### Listing expenses
+![list-expenses](https://github.com/adrian-em/lifestyle-cost-designer/assets/650616/9007d212-cfbd-4d38-af5a-409a53aecfc6) 
+
+#### Updating settings
+![update-settings](https://github.com/adrian-em/lifestyle-cost-designer/assets/650616/a4e1ce43-f827-435e-8e17-9875d3d10968)
+
+#### Calculating required income
+![calculate-required-income](https://github.com/adrian-em/lifestyle-cost-designer/assets/650616/8f3b7c33-7559-436c-99d2-96e85907ef51)
+
+#### Plotting required income by expense
+![plot-required-income](https://github.com/adrian-em/lifestyle-cost-designer/assets/650616/1f4a4f5f-e854-46ae-9db3-5df5b9dd741a)
+
