@@ -14,3 +14,5 @@ class Expense(BaseModel):
 class UserSettings(BaseModel):
     tax_rate: float
     savings_rate: float
+    current_income: float
+    current_expenses: float

@@ -24,6 +24,7 @@ def initialize_database():
         id INTEGER PRIMARY KEY CHECK (id = 1),  -- Ensures only one row for settings
         tax_rate REAL NOT NULL,
         savings_rate REAL NOT NULL
+        current_income REAL NOT NULL
     );
     """
     )
@@ -31,7 +32,7 @@ def initialize_database():
     # Insert initial data if necessary
     cursor.execute(
         """
-    INSERT OR IGNORE INTO user_settings (id, tax_rate, savings_rate) VALUES (1, 0, 0);
+    INSERT OR IGNORE INTO user_settings (id, tax_rate, savings_rate, current_income) VALUES (1, 0, 0, 0);
     """
     )
 

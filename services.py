@@ -13,6 +13,7 @@ def add_expense(
     )
     db.commit()
     return Expense(
+        id=cursor.lastrowid,
         description=description,
         category=category,
         amount=amount,
@@ -28,6 +29,8 @@ def list_expenses() -> list:
     expenses = cursor.fetchall()
     return [
         Expense(
+            id=e["id"],
+            description=e["description"],
             category=e["category"],
             amount=e["amount"],
             frequency=e["frequency"],
@@ -37,15 +40,25 @@ def list_expenses() -> list:
     ]
 
 
-def update_settings(tax_rate: float, savings_rate: float) -> UserSettings:
+def update_settings(
+    tax_rate: float, savings_rate: float, current_income: float, current_expenses: float
+) -> UserSettings:
     db = get_db()
     cursor = db.cursor()
     cursor.execute(
-        "REPLACE INTO user_settings (id, tax_rate, savings_rate) VALUES (1, ?, ?)",
-        (tax_rate, savings_rate),
+        """
+        REPLACE INTO user_settings (id, tax_rate, savings_rate, current_income, current_expenses) 
+        VALUES (1, ?, ?, ?, ?)
+        """,
+        (tax_rate, savings_rate, current_income, current_expenses),
     )
     db.commit()
-    return UserSettings(tax_rate=tax_rate, savings_rate=savings_rate)
+    return UserSettings(
+        tax_rate=tax_rate,
+        savings_rate=savings_rate,
+        current_income=current_income,
+        current_expenses=current_expenses,
+    )
 
 
 def get_settings() -> UserSettings:
@@ -53,10 +66,13 @@ def get_settings() -> UserSettings:
     cursor = db.cursor()
     cursor.execute("SELECT * FROM user_settings WHERE id = 1")
     settings = cursor.fetchone()
-    return (
-        UserSettings(
-            tax_rate=settings["tax_rate"], savings_rate=settings["savings_rate"]
-        )
-        if settings
-        else None
-    )
+    if settings:
+        return UserSettings(**settings)
+    return None
+
+
+def delete_expense(expense_id: int) -> None:
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM expenses WHERE id = ?", (expense_id,))
+    db.commit()
