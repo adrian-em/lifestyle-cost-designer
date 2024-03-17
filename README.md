@@ -39,6 +39,9 @@ These calculations assist in setting realistic financial goals and planning effe
 
 ### Usage
 
+First, initialize the database.
+
+`python init_db.py`
 You can either use it via API or with CLI.
 
 `python cli.py --help`
